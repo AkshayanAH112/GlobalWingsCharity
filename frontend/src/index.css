@@ -1,0 +1,225 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* GlobalWingCharity Design System - Navy & Gold Theme */
+
+@layer base {
+  :root {
+    /* Core Brand Colors */
+    --background: 233 50% 99%;
+    --foreground: 232 66% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 232 66% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 232 66% 15%;
+
+    /* Primary: Deep Navy Blue (#1B2580) */
+    --primary: 232 65% 30%;
+    --primary-foreground: 233 50% 99%;
+
+    /* Secondary: Warm Gold (#F4A823) */
+    --secondary: 38 90% 55%;
+    --secondary-foreground: 232 66% 15%;
+
+    /* Muted: Powder Blue */
+    --muted: 233 45% 93%;
+    --muted-foreground: 232 30% 45%;
+
+    /* Accent: Gold Light */
+    --accent: 38 85% 88%;
+    --accent-foreground: 232 66% 15%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 233 35% 88%;
+    --input: 233 35% 88%;
+    --ring: 232 65% 30%;
+
+    --radius: 0.75rem;
+
+    /* Extended Palette */
+    --navy: 232 65% 30%;
+    --navy-light: 233 45% 93%;
+    --navy-dark: 232 75% 15%;
+    --royal: 233 60% 44%;
+    --gold: 38 90% 55%;
+    --gold-light: 38 85% 88%;
+    --gold-dark: 35 80% 42%;
+    --powder: 233 45% 93%;
+    --cream: 38 50% 97%;
+    --warm-white: 233 100% 99%;
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(232 75% 15%) 0%, hsl(232 65% 30%) 60%, hsl(233 60% 44%) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(38 90% 55%) 0%, hsl(35 80% 42%) 100%);
+    --gradient-section: linear-gradient(180deg, hsl(233 50% 99%) 0%, hsl(233 45% 93%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(38 85% 88% / 0.3) 100%);
+    --gradient-navy-gold: linear-gradient(135deg, hsl(232 65% 30%) 0%, hsl(38 90% 55%) 100%);
+
+    /* Shadows */
+    --shadow-soft: 0 4px 20px -4px hsl(232 65% 30% / 0.08);
+    --shadow-card: 0 8px 32px -8px hsl(232 65% 30% / 0.12);
+    --shadow-elevated: 0 20px 60px -15px hsl(232 65% 30% / 0.2);
+    --shadow-gold: 0 8px 30px -8px hsl(38 90% 55% / 0.4);
+    --shadow-navy: 0 8px 30px -8px hsl(232 65% 30% / 0.35);
+
+    /* Sidebar */
+    --sidebar-background: 233 35% 97%;
+    --sidebar-foreground: 232 40% 25%;
+    --sidebar-primary: 232 65% 30%;
+    --sidebar-primary-foreground: 233 50% 99%;
+    --sidebar-accent: 38 85% 88%;
+    --sidebar-accent-foreground: 232 66% 15%;
+    --sidebar-border: 233 35% 90%;
+    --sidebar-ring: 232 65% 30%;
+  }
+
+  .dark {
+    --background: 232 50% 8%;
+    --foreground: 233 40% 95%;
+
+    --card: 232 45% 12%;
+    --card-foreground: 233 40% 95%;
+
+    --popover: 232 45% 12%;
+    --popover-foreground: 233 40% 95%;
+
+    --primary: 232 65% 55%;
+    --primary-foreground: 232 50% 8%;
+
+    --secondary: 38 80% 50%;
+    --secondary-foreground: 232 50% 8%;
+
+    --muted: 232 30% 20%;
+    --muted-foreground: 233 20% 65%;
+
+    --accent: 38 60% 25%;
+    --accent-foreground: 233 40% 95%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 232 30% 20%;
+    --input: 232 30% 20%;
+    --ring: 232 65% 55%;
+
+    --sidebar-background: 232 45% 10%;
+    --sidebar-foreground: 233 30% 90%;
+    --sidebar-primary: 232 65% 55%;
+    --sidebar-primary-foreground: 232 50% 8%;
+    --sidebar-accent: 38 60% 25%;
+    --sidebar-accent-foreground: 233 40% 95%;
+    --sidebar-border: 232 30% 18%;
+    --sidebar-ring: 232 65% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tight;
+  }
+}
+
+@layer components {
+  .text-gradient-hero {
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-gold {
+    background: var(--gradient-gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .bg-gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .bg-gradient-gold {
+    background: var(--gradient-gold);
+  }
+
+  .bg-gradient-section {
+    background: var(--gradient-section);
+  }
+
+  .bg-gradient-card {
+    background: var(--gradient-card);
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+
+  .shadow-elevated {
+    box-shadow: var(--shadow-elevated);
+  }
+
+  .shadow-gold {
+    box-shadow: var(--shadow-gold);
+  }
+
+  /* Animations */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-pulse-soft {
+    animation: pulse-soft 3s ease-in-out infinite;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.6s ease-out;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.8s ease-out;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes slide-up {
+  from { 
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

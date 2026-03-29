@@ -94,16 +94,7 @@ exports.register = [
 exports.login = [
   body('identifier')
     .notEmpty()
-    .withMessage('Email or Student ID is required')
-    .custom((value) => {
-      // Check if it's an email or student ID format (GWC20250001)
-      const isEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value);
-      const isStudentId = /^GWC\d{8}$/.test(value.toUpperCase());
-      if (!isEmail && !isStudentId) {
-        throw new Error('Please provide a valid email or Student ID (format: GWC20250001)');
-      }
-      return true;
-    }),
+    .withMessage('Username, Email or Student ID is required'),
   body('password').notEmpty().withMessage('Password is required'),
 
   handleValidationErrors,
@@ -116,13 +107,14 @@ exports.login = [
       let user;
       let studentData = null;
 
-      // Check if identifier is email or student ID
+      // Check if identifier is email, username, or student ID
       const isEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(identifier);
+      const isStudentId = /^GWC\d{8}$/.test(identifier.toUpperCase());
       
       if (isEmail) {
         // Login with email
         user = await User.findOne({ email: identifier.toLowerCase() }).select('+password');
-      } else {
+      } else if (isStudentId) {
         // Login with student ID
         const studentId = identifier.toUpperCase();
         const student = await Student.findOne({ studentId });
@@ -132,6 +124,9 @@ exports.login = [
           user = await User.findOne({ studentId: student._id }).select('+password');
           studentData = student;
         }
+      } else {
+        // Login with username (for admin/teacher)
+        user = await User.findOne({ username: identifier }).select('+password');
       }
 
       if (!user) {

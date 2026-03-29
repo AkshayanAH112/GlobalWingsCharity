@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: [true, 'Email is required'],
+      required: false,
       trim: true,
       lowercase: true,
       match: [
@@ -64,8 +64,8 @@ const userSchema = new mongoose.Schema(
 );
 
 // Indexes
-userSchema.index({ email: 1 });
-userSchema.index({ username: 1 });
+userSchema.index({ email: 1 }, { unique: true, sparse: true });
+userSchema.index({ username: 1 }, { unique: true, sparse: true });
 userSchema.index({ role: 1 });
 
 // Virtual for full name

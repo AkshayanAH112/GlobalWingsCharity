@@ -16,13 +16,22 @@ const { errorHandler, notFound } = require('./middleware/errorHandler');
 require('./models/User');
 require('./models/Student');
 require('./models/Batch');
+require('./models/Grade');
 require('./models/Subject');
 require('./models/Mark');
 require('./models/Attendance');
+require('./models/StudentRanking');
 
 // Import routes
 const authRoutes = require('./routes/authRoutes');
 const studentRoutes = require('./routes/studentRoutes');
+const batchRoutes = require('./routes/batchRoutes');
+const gradeRoutes = require('./routes/gradeRoutes');
+const markRoutes = require('./routes/markRoutes');
+const rankingRoutes = require('./routes/rankingRoutes');
+const analyticsRoutes = require('./routes/analyticsRoutes');
+const subjectRoutes = require('./routes/subjectRoutes');
+const attendanceRoutes = require('./routes/attendanceRoutes');
 
 // Initialize express app
 const app = express();
@@ -34,11 +43,49 @@ connectDB();
 app.use(helmet());
 app.use(mongoSanitize());
 
-// CORS configuration
+// CORS configuration - Allow multiple origins for development
+const allowedOrigins = [
+  'http://localhost:5000', // Backend API & Swagger UI
+  'http://localhost:5173', // Frontend dev server (Vite)
+  'http://localhost:8080', // Frontend build/preview
+  'http://127.0.0.1:5000',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:8080',
+];
+
+// In development, also allow local network IPs
+if (process.env.NODE_ENV !== 'production') {
+  // This will allow any IP on port 5173 or 8080 in development
+  allowedOrigins.push(/^http:\/\/192\.168\.\d{1,3}\.\d{1,3}:(5173|8080)$/);
+  allowedOrigins.push(/^http:\/\/10\.\d{1,3}\.\d{1,3}\.\d{1,3}:(5173|8080)$/);
+  allowedOrigins.push(/^http:\/\/172\.(1[6-9]|2[0-9]|3[0-1])\.\d{1,3}\.\d{1,3}:(5173|8080)$/);
+}
+
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps, Postman, etc.)
+      if (!origin) return callback(null, true);
+      
+      // Check if origin matches any allowed origin
+      const isAllowed = allowedOrigins.some(allowed => {
+        if (typeof allowed === 'string') {
+          return allowed === origin;
+        }
+        // If it's a regex, test it
+        return allowed.test(origin);
+      });
+      
+      if (isAllowed) {
+        callback(null, true);
+      } else {
+        console.log('Blocked origin:', origin);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
 
@@ -99,6 +146,13 @@ app.get('/health', (req, res) => {
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/students', studentRoutes);
+app.use('/api/batches', batchRoutes);
+app.use('/api/grades', gradeRoutes);
+app.use('/api/marks', markRoutes);
+app.use('/api/rankings', rankingRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/subjects', subjectRoutes);
+app.use('/api/attendance', attendanceRoutes);
 
 // Root route
 app.get('/', (req, res) => {

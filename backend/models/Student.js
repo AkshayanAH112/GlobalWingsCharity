@@ -20,9 +20,10 @@ const studentSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: [true, 'Email is required'],
+      required: false,
       trim: true,
       lowercase: true,
+      sparse: true,
       match: [
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
         'Please provide a valid email',
@@ -31,11 +32,9 @@ const studentSchema = new mongoose.Schema(
     phone: {
       type: String,
       trim: true,
-      match: [/^[0-9]{10}$/, 'Please provide a valid 10-digit phone number'],
     },
     dateOfBirth: {
       type: Date,
-      required: [true, 'Date of birth is required'],
     },
     gender: {
       type: String,
@@ -55,7 +54,22 @@ const studentSchema = new mongoose.Schema(
     batchId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Batch',
-      required: [true, 'Batch is required'],
+      required: false,
+    },
+    gradeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Grade',
+      required: false,
+    },
+    academicInfo: {
+      rollNumber: {
+        type: Number,
+        min: 1,
+      },
+      admissionNumber: {
+        type: String,
+        trim: true,
+      },
     },
     enrollmentDate: {
       type: Date,
@@ -93,8 +107,11 @@ const studentSchema = new mongoose.Schema(
 
 // Indexes
 studentSchema.index({ studentId: 1 }, { unique: true });
-studentSchema.index({ email: 1 }, { unique: true });
+studentSchema.index({ email: 1 }, { unique: true, sparse: true });
 studentSchema.index({ batchId: 1 });
+studentSchema.index({ gradeId: 1 });
+studentSchema.index({ gradeId: 1, 'academicInfo.rollNumber': 1 });
+studentSchema.index({ status: 1, gradeId: 1 });
 studentSchema.index({ status: 1 });
 studentSchema.index({ lastName: 1, firstName: 1 });
 
@@ -116,8 +133,8 @@ studentSchema.virtual('age').get(function () {
   return age;
 });
 
-// Pre-save hook to generate student ID
-studentSchema.pre('save', async function (next) {
+// Pre-validate hook to generate student ID before validation runs
+studentSchema.pre('validate', async function (next) {
   if (this.isNew && !this.studentId) {
     try {
       const year = new Date().getFullYear();

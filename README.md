@@ -1,51 +1,52 @@
 # Global Wings Charity - Student Management System
 
-A comprehensive student management system built with MERN stack and Next.js, designed to manage student details, performance tracking, marks management, and analytics.
+A comprehensive student management system built with MERN stack, designed for administrators and teachers to manage student data, track attendance, record marks, and generate analytics.
+
+## 🎯 System Overview
+
+This is an **admin and teacher-only** system. Students do not have login access. All student data is managed by authorized staff through the dashboard.
+
+### User Roles
+
+- **Admin**: Full system access, manages teachers, students, batches, and subjects
+- **Teacher**: Manages assigned students, marks attendance, enters grades, views reports
+- **Student**: Records only (no login) - identified by auto-generated Student IDs
 
 ## 🚀 Features
 
-- **Student Management**: Add, edit, and manage student profiles
-- **Batch Management**: Organize students into batches/classes
-- **Marks Management**: Record and track student marks for different subjects
-- **Excel Import/Export**: Bulk import students and marks via Excel files
-- **Performance Analytics**: Visual charts and graphs for student progress
-- **Ranking System**: Automatic batch-wise student ranking
-- **Role-Based Access**: Different access levels for Admin, Teachers, and Students
-- **Progress Reports**: Comprehensive performance reports with visualizations
+- **Student Management**: Add, edit, and manage student profiles with auto-generated IDs
+- **Batch Management**: Organize students into class batches with schedules
+- **Subject Management**: Create and manage courses/subjects
+- **Attendance Tracking**: Daily attendance with status (Present, Absent, Late, Excused)
+- **Marks Management**: Record exam results with automatic grade calculation
+- **Analytics Dashboard**: Comprehensive reports with grade distribution and performance metrics
+- **Role-Based Access**: Admin and teacher-specific permissions
+- **Mobile Responsive**: Fully responsive design for all devices
 
 ## 🛠️ Technology Stack
 
 ### Frontend
-- Next.js 14+ (App Router)
-- React 18+
+- React 18+ with Vite
 - TypeScript
 - shadcn/ui components
 - Tailwind CSS
-- Recharts for data visualization
-- React Query for data fetching
-- React Hook Form + Zod for form validation
+- TanStack Query (React Query)
+- React Router DOM
+- Axios for API calls
 
 ### Backend
-- Node.js
-- Express.js
+- Node.js with Express.js
 - MongoDB with Mongoose
 - JWT Authentication
-- Excel processing with SheetJS
-
-### Deployment
-- Frontend: Vercel
-- Backend: Railway/Render
-- Database: MongoDB Atlas
+- bcryptjs for password hashing
+- Express Validator
+- Helmet & CORS for security
 
 ## 📋 Prerequisites
 
 - Node.js 18+ installed
 - MongoDB installed locally or MongoDB Atlas account
 - Git installed
-- npm or yarn package manager
-
-## 🏗️ Project Structure
-
 ```
 GlobalWingsCharity/
 ├── backend/                 # Express.js backend
@@ -54,112 +55,195 @@ GlobalWingsCharity/
 │   ├── models/            # Mongoose models
 │   ├── routes/            # API routes
 │   ├── middleware/        # Custom middleware
+│   ├── scripts/           # Seed scripts
+│   │   ├── seedAdmin.js   # Create admin account
+│   │   └── seedTeachers.js # Create teacher accounts
 │   ├── utils/             # Utility functions
 │   └── server.js          # Entry point
-├── frontend/               # Next.js frontend
-│   ├── app/               # App router pages
-│   ├── components/        # React components
-│   ├── lib/               # Utility functions
-│   ├── hooks/             # Custom hooks
-│   └── types/             # TypeScript types
+├── frontend/               # React with Vite frontend
+│   ├── src/
+│   │   ├── components/    # React components
+│   │   ├── pages/         # Page components
+│   │   ├── contexts/      # React contexts
+│   │   ├── hooks/         # Custom hooks
+│   │   └── lib/           # Utility functions & API
 ├── docs/                  # Documentation
+├── ADMIN_SETUP.md        # Admin setup guide
+├── QUICKSTART.md         # Quick start guide
 └── IMPLEMENTATION_DOCUMENT.md
 ```
 
 ## 🚦 Getting Started
 
-### Step 1: Clone the Repository
+For detailed setup instructions, see [QUICKSTART.md](./QUICKSTART.md)
+
+### Quick Setup
+
+#### Step 1: Clone the Repository
 ```bash
 git clone <repository-url>
 cd GlobalWingsCharity
 ```
 
-### Step 2: Backend Setup
+#### Step 2: Backend Setup
 ```bash
 cd backend
 npm install
 cp .env.example .env
-# Configure your .env file
+# Edit .env with your MongoDB URI
 npm run dev
 ```
 
-### Step 3: Frontend Setup
+#### Step 3: Create Admin Account
+```bash
+# In a new terminal
+cd backend
+npm run seed:admin
+```
+
+**Default Admin Credentials:**
+- Email: `admin@globalwingcharity.org`
+- Username: `admin`
+- Password: `Admin@123`
+
+#### Step 4: (Optional) Create Sample Teachers
+```bash
+npm run seed:teachers
+```
+
+#### Step 5: Frontend Setup
 ```bash
 cd frontend
 npm install
-cp .env.example .env.local
-# Configure your .env.local file
 npm run dev
 ```
+
+#### Step 6: Access the Application
+1. Open browser to `http://localhost:5173`
+2. Click "Login"
+3. Use admin credentials
+4. **Change password immediately!**
 
 ## 📝 Environment Variables
 
 ### Backend (.env)
-```
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/student-management
-JWT_SECRET=your_jwt_secret_key
+```env
+PORT=3000
+MONGODB_URI=mongodb://localhost:27017/globalwingcharity
+JWT_SECRET=your_super_secret_jwt_key_change_this
 JWT_EXPIRE=7d
 NODE_ENV=development
 ```
 
-### Frontend (.env.local)
+### Frontend (.env)
+```env
+VITE_API_URL=http://localhost:3000/api
 ```
-NEXT_PUBLIC_API_URL=http://localhost:5000/api
-NEXT_PUBLIC_APP_NAME=Global Wings Charity
+
+## 🔐 User Management
+
+### Creating Admin (First Time)
+```bash
+cd backend
+npm run seed:admin
 ```
 
-## 👥 Agent Roles
+### Creating Teachers
+```bash
+cd backend
+npm run seed:teachers
+```
 
-This project is developed using an agent-based approach:
+Or manually add via MongoDB:
+```javascript
+// See backend/scripts/seedTeachers.js for example
+```
 
-1. **Frontend Architect**: Designs component structure and architecture
-2. **Frontend Developer**: Implements UI components and pages
-3. **Backend Architect**: Designs database schema and API structure
-4. **Backend Developer**: Implements API endpoints and business logic
-5. **Deployment Agent**: Manages deployment and CI/CD
+### Adding Students
+1. Login as admin or teacher
+2. Navigate to **Dashboard → Students**
+3. Click **"Add Student"** button
+4. Fill in student details
+5. Student ID is auto-generated (e.g., GWC20250001)
+
+**Note:** Students do NOT create accounts themselves. All student data is managed by administrators and teachers.
 
 ## 📚 Documentation
 
-Refer to the [Implementation Document](./IMPLEMENTATION_DOCUMENT.md) for detailed:
-- System architecture
-- Database schema
-- API endpoints
-- Development phases
-- Security considerations
-
-## 🔄 Development Workflow
-
-1. Review the Implementation Document
-2. Follow the phase-by-phase development approach
-3. Each agent works on their designated tasks
-4. Regular code reviews and testing
-5. Continuous integration and deployment
+- [ADMIN_SETUP.md](./ADMIN_SETUP.md) - Complete admin and user management guide
+- [QUICKSTART.md](./QUICKSTART.md) - Quick start guide
+- [IMPLEMENTATION_DOCUMENT.md](./IMPLEMENTATION_DOCUMENT.md) - Technical documentation
 
 ## 📊 Key Features in Detail
 
 ### Student Management
 - Manual student entry with form validation
-- Bulk import via Excel
-- Student profile with detailed information
-- Batch assignment
+- Auto-generated Student IDs (format: GWC20250001)
+- Complete student profiles with personal details
+- Batch assignment and management
+- Mobile-responsive table and card views
+- Search and filter functionality
+
+### Batch Management
+- Create and manage class batches
+- Set batch schedules (days and times)
+- Assign teachers to batches
+- Track batch capacity (max students)
+- Batch status (upcoming, active, completed, cancelled)
+
+### Subject Management
+- Create subjects with codes and credits
+- Categorize (Core, Elective, Practical, Theory, Project)
+- Assign teachers to subjects
+- Track total classes per subject
+- Active/inactive status management
+
+### Attendance Tracking
+- Daily attendance marking
+- Multiple status options (Present, Absent, Late, Excused, Holiday)
+- Check-in/check-out time tracking
+- Real-time attendance statistics
+- Date-based filtering and reports
+- Visual attendance rate indicators
 
 ### Marks Management
-- Subject-wise marks entry
-- Multiple exam types (Midterm, Final, Quiz, Assignment)
-- Automatic grade calculation
-- Bulk marks import via Excel
+- Record exam results by subject
+- Multiple exam types (Quiz, Assignment, Mid-Term, Final, Project, Practical)
+- Automatic percentage calculation
+- Auto-assigned grades (A+ to F)
+- Grade distribution visualization
+- Subject-wise and student-wise reports
 
 ### Analytics Dashboard
-- Performance trends over time
-- Subject-wise analysis
-- Batch comparison charts
-- Grade distribution visualization
+- Key performance indicators
+- Grade distribution charts
+- Student status breakdown
+- Attendance rate analytics
+- Pass/fail statistics
+- Average score calculations
+- Time-range based reports
 
-### Ranking System
-- Real-time batch-wise ranking
-- Percentage and grade-based sorting
-- Merit lists generation
+## 🎨 UI/UX Features
+
+- Fully mobile responsive design
+- Dark mode support via shadcn/ui
+- Loading states and error handling
+- Toast notifications for user feedback
+- Accessible components (ARIA labels)
+- Clean, modern interface with Tailwind CSS
+- Consistent color-coded status badges
+
+## 🔐 Security Features
+
+- JWT-based authentication
+- Role-based access control (RBAC)
+- Protected API routes
+- Password hashing with bcryptjs
+- No public registration endpoint
+- Admin-only user management
+- HTTP security headers (Helmet)
+- CORS configuration
+- Input validation and sanitization
 
 ## 🧪 Testing
 

@@ -10,58 +10,61 @@ exports.createStudent = [
   // Validation
   body('firstName').trim().notEmpty().withMessage('First name is required'),
   body('lastName').trim().notEmpty().withMessage('Last name is required'),
-  body('email').isEmail().withMessage('Please provide a valid email').normalizeEmail(),
-  body('phone').optional().matches(/^[0-9]{10}$/).withMessage('Phone must be 10 digits'),
-  body('dateOfBirth').isISO8601().withMessage('Valid date of birth is required'),
-  body('gender').isIn(['Male', 'Female', 'Other']).withMessage('Valid gender is required'),
+  body('email').optional({ checkFalsy: true }).isEmail().withMessage('Please provide a valid email').normalizeEmail(),
+  body('phone').optional({ checkFalsy: true }),
+  body('dateOfBirth').optional({ checkFalsy: true }).isISO8601().withMessage('Valid date of birth is required'),
+  body('gender').isIn(['male', 'female', 'other']).withMessage('Valid gender is required'),
 
   handleValidationErrors,
 
   async (req, res, next) => {
     try {
-      const { firstName, lastName, email, phone, dateOfBirth, gender, address, parentContact, batchId } = req.body;
+      const { firstName, lastName, email, phone, dateOfBirth, gender, address, parentContact, batchId, gradeId } = req.body;
 
-      // Check if email already exists
-      const existingStudent = await Student.findOne({ email });
-      if (existingStudent) {
-        return res.status(400).json({
-          success: false,
-          error: {
-            code: 'EMAIL_EXISTS',
-            message: 'Email already registered',
-          },
-        });
+      // Check if email already exists (only if email provided)
+      if (email) {
+        const existingStudent = await Student.findOne({ email });
+        if (existingStudent) {
+          return res.status(400).json({
+            success: false,
+            error: { code: 'EMAIL_EXISTS', message: 'Email already registered' },
+          });
+        }
       }
 
       // Create student record (studentId will be auto-generated)
       const student = await Student.create({
         firstName,
         lastName,
-        email,
-        phone,
-        dateOfBirth,
+        ...(email && { email }),
+        ...(phone && { phone }),
+        ...(dateOfBirth && { dateOfBirth }),
         gender,
         address,
         parentContact,
-        batchId,
+        ...(batchId && { batchId }),
+        ...(gradeId && { gradeId }),
       });
 
-      // Generate username from student ID (e.g., GWC20250001 -> gwc20250001)
       const username = student.studentId.toLowerCase();
-      
-      // Default password is student ID (user should change on first login)
       const defaultPassword = student.studentId;
 
-      // Create user account for the student
-      const user = await User.create({
-        username,
-        email,
-        password: defaultPassword,
-        firstName,
-        lastName,
-        role: 'student',
-        studentId: student._id,
-      });
+      let user;
+      try {
+        user = await User.create({
+          username,
+          ...(email && { email }),
+          password: defaultPassword,
+          firstName,
+          lastName,
+          role: 'student',
+          studentId: student._id,
+        });
+      } catch (userErr) {
+        // Rollback: remove the student if user account creation fails
+        await Student.findByIdAndDelete(student._id);
+        throw userErr;
+      }
 
       res.status(201).json({
         success: true,
@@ -116,6 +119,7 @@ exports.getAllStudents = async (req, res, next) => {
 
     const students = await Student.find(query)
       .populate('batchId', 'batchName batchCode')
+      .populate('gradeId', 'gradeName gradeCode')
       .sort({ createdAt: -1 })
       .limit(limit * 1)
       .skip((page - 1) * limit);

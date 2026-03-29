@@ -21,13 +21,12 @@ const batchSchema = new mongoose.Schema(
     },
     startDate: {
       type: Date,
-      required: [true, 'Start date is required'],
     },
     endDate: {
       type: Date,
-      required: [true, 'End date is required'],
       validate: {
         validator: function (value) {
+          if (!value || !this.startDate) return true;
           return value > this.startDate;
         },
         message: 'End date must be after start date',
